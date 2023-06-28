@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 
 def draw_scatter(s, num, data_path, image_path):
     """
-    param s : 点的大小，整数
-    image_path : 图片路径
+    param s : Scatter size
+    image_path : image path
     return : None
     """
     data = np.loadtxt(data_path, encoding='utf-8', delimiter='\t')
-	# 通过切片获取横坐标x1
+	# Get the abscissa x by slicing
     nx1 = data[0:672, 0]           # Leptodactylidae
     nx2 = data[673:1214, 0]        # Dendrobatidae
     nx3 = data[1215:4692, 0]       # Leptodactylidae
@@ -19,7 +19,7 @@ def draw_scatter(s, num, data_path, image_path):
     nx6 = data[6866:6979, 0]       # Hylidae
     nx7 = data[6980:7047, 0]       # Bufonidae
     nx8 = data[7048:7195, 0]       # Hylidae
-	# 通过切片获取纵坐标R
+	# Get ordinate y by slice
     ny1 = data[0:672, 1]           # Leptodactylidae
     ny2 = data[673:1214, 1]        # Dendrobatidae
     ny3 = data[1215:4692, 1]       # Leptodactylidae
@@ -28,16 +28,16 @@ def draw_scatter(s, num, data_path, image_path):
     ny6 = data[6866:6979, 1]       # Hylidae
     ny7 = data[6980:7047, 1]       # Bufonidae
     ny8 = data[7048:7195, 1]       # Hylidae
-	# 创建画图窗口
+	# Create a drawing window
     fig = plt.figure(figsize=(5, 5))
     ax = fig.add_subplot(1,1,1)
-	# 设置标题
+	# set title
     ax.set_title('npca')
-	# 设置横坐标名称
+	# Set the abscissa name
     ax.set_xlabel('pc1')
-	# 设置纵坐标名称
+	# Set the ordinate name
     ax.set_ylabel('pc2')
-	# 画散点图
+	# Draw a scatterplot
     ax.scatter(nx1, ny1, s = s, c='k')
     ax.scatter(nx2, ny2, s = s, c='b')
     ax.scatter(nx3, ny3, s = s, c='k')
@@ -46,17 +46,17 @@ def draw_scatter(s, num, data_path, image_path):
     ax.scatter(nx6, ny6, s = s, c='r')
     ax.scatter(nx7, ny7, s = s, c='g')
     ax.scatter(nx8, ny8, s = s, c='r')
-	# 调整横坐标的上下界
+	# Adjust the upper and lower bounds of the horizontal and vertical coordinates
     plt.xlim(xmax=15, xmin=-15)
     plt.ylim(ymax=10, ymin=-20)
-	# 显示
+	# show
     plt.savefig('%s/%s.png' % (image_path, num))
     plt.close()
 
 def draw_multipng(data_path, image_path):
     '''
-    对npca降维过程中的多条结果画图
-    data_path : pc.npca 的目录
+    Draw multiple results in the npca dimensionality reduction process
+    data_path : result path
     '''
     pathDir = os.listdir(data_path)
     for eachdata in pathDir:
@@ -65,20 +65,20 @@ def draw_multipng(data_path, image_path):
 
 def png_to_gif(image_path, gif_name, duration):
     '''
-    image_path : 图片保存路径
-    gif_name : gif路径名称
-    duration : 间隔时间
+    image_path : Image save path
+    gif_name : gif save path name
+    duration : Intervals
     '''
-    # frames 用于保存图片列表
+    # frames used to save the picture list
     frames = []
-    # 获取图片路径里的所有图片
+    # Get all pictures in the picture path
     image_list = os.listdir(image_path)
     image_list.sort(key=lambda x:int(x[:-4]))
-    # imageio读入图片保存进frames列表 
+    # Imageio reads in pictures and saves them in frames list 
     for image in image_list:
         image = image_path + '/' + image
         frames.append(iio.v2.imread(image))
-    # 
+    # create gif
     iio.mimsave(gif_name, frames, 'GIF', duration=duration)
 
 
