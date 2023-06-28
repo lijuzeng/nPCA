@@ -4,22 +4,22 @@ import pandas as pd
 
 
 def rawdata2data(file):
-    # rawdata = sc.read_10x_mtx(file)                             # 读入 .mtx 数据
-    rawdata = sc.read_text(file, delimiter='\t', first_column_names=True)                 # 读入 .csv 数据
+    # rawdata = sc.read_10x_mtx(file)                                                     # read-in .mtx data
+    rawdata = sc.read_text(file, delimiter='\t', first_column_names=True)                 # read-in .csv data
     rawdata.var_names_make_unique()
     print(rawdata)
 
-    sc.pp.filter_cells(rawdata, min_genes=200)                  # 去除表达基因200以下的细胞
-    sc.pp.filter_genes(rawdata, min_cells=3)                    # 去除在3个细胞以下表达的基因
+    sc.pp.filter_cells(rawdata, min_genes=200)                  # Remove cells expressing less than 200 genes
+    sc.pp.filter_genes(rawdata, min_cells=3)                    # Remove genes expressing below 3 cells
     print(rawdata)
 
-    # 对每一个细胞计算 线粒体基因表达量 / 所有基因表达量
-    # mito_gene = rawdata.var_names.str.startswith('MT-')         # human
+    # Calculate mitochondrial gene expression level/all gene expression level for each cell
+    # mito_gene = rawdata.var_names.str.startswith('MT-')       # human
     mito_gene = rawdata.var_names.str.startswith('Mt-')         # mouse
     rawdata.obs['percent_mito'] = \
         np.ravel(np.mat(rawdata[:, mito_gene].X.sum(axis=1))) / np.ravel(np.mat(rawdata.X.sum(axis=1)))
-    rawdata = rawdata[rawdata.obs.n_genes < 2500, :]                # 获取表达基因数在 2500 以下的细胞样本
-    rawdata = rawdata[rawdata.obs.percent_mito < 0.05, :]           # 获取线粒体基因占比在 5% 以下的细胞样本
+    rawdata = rawdata[rawdata.obs.n_genes < 2500, :]                # Obtain cell samples with less than 2500 expressed genes
+    rawdata = rawdata[rawdata.obs.percent_mito < 0.05, :]           # Obtain cell samples with less than 5% mitochondrial genes
     print(rawdata)
 
     sc.pp.normalize_total(rawdata, target_sum=1e4)
