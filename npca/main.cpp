@@ -26,7 +26,7 @@ void npca_output(float *w, vector<vector<float>> &data, ofstream &out) {
 
 void pca_output(vector<vector<float>> &data, float *w, ofstream &out) {
     uint32_t sample = data.size(),  feature = data[0].size();
-    /* 对数据进行 SVD 分解，取 U 矩阵为协方差矩阵的特征向量 */
+    /* Decompose the data by SVD and take the V matrix as the eigenvector of the covariance matrix */
     Matrix<float, -1, -1> m(feature, sample);
     for (size_t i = 0; i < sample; ++i) for (size_t j = 0; j < feature; ++j) m(j, i) = data[i][j];
     BDCSVD<Matrix<float, -1, -1>> svd(m, ComputeThinU | ComputeThinV);
