@@ -36,10 +36,10 @@ struct NeuralNetwork {
         output = new float[output_neuron_num];
         gra = new float[input_neuron_num];
         uint64_t rng = wyhash64(input_neuron_num, output_neuron_num);
-        for (size_t i = 0; i < output_neuron_num * input_neuron_num; ++i) w[i] = wy2gau(wyrand(&rng));     // 初始化参数
+        for (size_t i = 0; i < output_neuron_num * input_neuron_num; ++i) w[i] = wy2gau(wyrand(&rng));     // Initialization parameters
     }
 //    ~NeuralNetwork() {delete [] w; delete [] output; delete [] gra;}
-    void forw(const float *input) const {                                           // 前向传播
+    void forw(const float *input) const {                                           // forward propagation
         for (size_t i = 0; i < output_neuron_num; ++i) {
             float temp = 0.0,   *weight = w + i * input_neuron_num;
             for (size_t j = 0; j < input_neuron_num; ++j) temp += input[j] * weight[j];
@@ -49,22 +49,22 @@ struct NeuralNetwork {
             for (size_t i = 0; i < output_neuron_num; ++i) output[i] = activate(output[i]);
         }
     }
-    void back(const float *input, const float *gin) const {                           // 后向传播
+    void back(const float *input, const float *gin) const {                           // backpropagation
         memset(gra, 0, input_neuron_num * sizeof(float));
         if (!isLinear) {
             for (size_t i = 0; i < output_neuron_num; ++i) {
                 float *weight = w + i * input_neuron_num, s = gin[i] * act_back(output[i]) * wh;
                 for (size_t j = 0; j < input_neuron_num; ++j) {
-                    gra[j] += s * weight[j];                            // 输入层 的偏导
-                    weight[j] -= s * input[j] * learning_rate;          // 更新 w
+                    gra[j] += s * weight[j];                            // The partial derivative of the input layer
+                    weight[j] -= s * input[j] * learning_rate;          // updata weight
                 }
             }
         } else {
             for(size_t i = 0; i < output_neuron_num; ++i) {
                 float *weight = w + i * input_neuron_num, s = gin[i] * wh;
                 for (size_t j = 0; j < input_neuron_num; ++j) {
-                    gra[j] += s * weight[j];                            // 输入层 的偏导
-                    weight[j] -= s * input[j] * learning_rate;          // 更新 w
+                    gra[j] += s * weight[j];                            // The partial derivative of the input layer
+                    weight[j] -= s * input[j] * learning_rate;          // updata weight
                 }
             }
         }
@@ -101,7 +101,7 @@ struct IOFile {
         sample = data.size();
         return true;
     }
-    void normalization_z() {                                  // z-score 归一化
+    void normalization_z() {                                  // z-score layer normalization
         for (uint32_t i = 0; i != feature; ++i) {
             float sum_x = 0.0, sum_xx = 0.0;
             for (uint32_t j = 0; j != sample; ++j) {
